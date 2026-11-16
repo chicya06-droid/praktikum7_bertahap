@@ -25,10 +25,29 @@ class _MahasiswaPageState extends State<MahasiswaPage> {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(title: const Text('Praktikum 7: Data Mahasiswa')),
-    body: 
-
-const Center(child: Text('Tahap 0: kerangka aplikasi')),
-
+    // TAHAP 2: Tampilkan list mahasiswa.
+    body: Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: Text('Data tersimpan: ${mahasiswa.length}'),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: mahasiswa.length,
+            itemBuilder: (context, index) {
+              final item = mahasiswa[index];
+              return Card(
+                child: ListTile(
+                  title: Text(item['nama']!),
+                  subtitle: Text('${item['nim']} | ${item['prodi']}'),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    ),
     );
   }
 }
