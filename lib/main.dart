@@ -21,6 +21,18 @@ class _MahasiswaPageState extends State<MahasiswaPage> {
   ];
   int nextId = 3;
 
+  // TAHAP 3: CREATE. Form mengembalikan data baru.
+  Future<void> tambahData() async {
+    final hasil = await showDialog<Map<String, String>>(
+      context: context,
+      builder: (_) => MahasiswaForm(dataSudahAda: mahasiswa),
+    );
+    if (!mounted || hasil == null) return;
+    setState(() {
+      mahasiswa.add({'id': '${nextId++}', ...hasil});
+    });
+  }
+
   @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -48,6 +60,120 @@ Widget build(BuildContext context) {
         ),
       ],
     ),
+    floatingActionButton: FloatingActionButton.extended(
+      onPressed: tambahData,
+      icon: const Icon(Icons.add),
+      label: const Text('Tambah'),
+    ),
+    );
+  }
+}
+
+// Form dipisahkan menjadi widget agar controller memiliki lifecycle yang benar.
+class MahasiswaForm extends StatefulWidget {
+  final Map<String, String>? dataAwal;
+  final List<Map<String, String>> dataSudahAda;
+
+  const MahasiswaForm({super.key, this.dataAwal, required this.dataSudahAda});
+
+  @override
+  State<MahasiswaForm> createState() => _MahasiswaFormState();
+}
+
+class _MahasiswaFormState extends State<MahasiswaForm> {
+  final formKey = GlobalKey<FormState>();
+  late final TextEditingController nim;
+  late final TextEditingController nama;
+  late final TextEditingController prodi;
+  late final TextEditingController ipk;
+
+  @override
+  void initState() {
+    super.initState();
+    nim   = TextEditingController(text: widget.dataAwal?['nim']   ?? '');
+    nama  = TextEditingController(text: widget.dataAwal?['nama']  ?? '');
+    prodi = TextEditingController(text: widget.dataAwal?['prodi'] ?? '');
+    ipk   = TextEditingController(text: widget.dataAwal?['ipk']   ?? '');
+  }
+
+  @override
+  void dispose() {
+    nim.dispose();
+    nama.dispose();
+    prodi.dispose();
+    ipk.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.dataAwal == null ? 'Tambah Data' : 'Ubah Data'),
+      content: SingleChildScrollView(
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: nim,
+                decoration: const InputDecoration(labelText: 'NIM'),
+                validator: (value) {
+                  final v = value?.trim() ?? '';
+                  if (v.isEmpty) return 'NIM wajib diisi';
+                  final sudahAda = widget.dataSudahAda.any((m) =>
+                      m['nim'] == v && m['id'] != widget.dataAwal?['id']);
+                  if (sudahAda) return 'NIM sudah digunakan';
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: nama,
+                decoration: const InputDecoration(labelText: 'Nama'),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Nama wajib diisi' : null,
+              ),
+              TextFormField(
+                controller: prodi,
+                decoration: const InputDecoration(labelText: 'Prodi'),
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Prodi wajib diisi' : null,
+              ),
+              TextFormField(
+                controller: ipk,
+                decoration: const InputDecoration(labelText: 'IPK'),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                validator: (value) {
+                  final v = value?.trim() ?? '';
+                  if (v.isEmpty) return 'IPK wajib diisi';
+                  final angka = double.tryParse(v);
+                  if (angka == null || angka < 0 || angka > 4)
+                    return 'IPK harus antara 0.00 - 4.00';
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Batal'),
+        ),
+        FilledButton(
+          onPressed: () {
+            if (!formKey.currentState!.validate()) return;
+            Navigator.pop(context, {
+              'nim':   nim.text.trim(),
+              'nama':  nama.text.trim(),
+              'prodi': prodi.text.trim(),
+              'ipk':   ipk.text.trim(),
+            });
+          },
+          child: const Text('Simpan'),
+        ),
+      ],
     );
   }
 }
