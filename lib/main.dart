@@ -16,8 +16,8 @@ class _MahasiswaPageState extends State<MahasiswaPage> {
 
   // TAHAP 1: Inisialisasi data sementara di RAM.
   final List<Map<String, String>> mahasiswa = [
-    {'id': '1', 'nim': '2026001', 'nama': 'Andi', 'prodi': 'Informatika'},
-    {'id': '2', 'nim': '2026002', 'nama': 'Siti', 'prodi': 'Informatika'},
+    {'id': '1', 'nim': '2026001', 'nama': 'Andi', 'prodi': 'Informatika', 'ipk': '3.75'},
+    {'id': '2', 'nim': '2026002', 'nama': 'Siti', 'prodi': 'Informatika', 'ipk': '3.90'},
   ];
   int nextId = 3;
 
@@ -40,7 +40,7 @@ Widget build(BuildContext context) {
               return Card(
                 child: ListTile(
                   title: Text(item['nama']!),
-                  subtitle: Text('${item['nim']} | ${item['prodi']}'),
+                  subtitle: Text('${item['nim']} | ${item['prodi']} | IPK: ${item['ipk']}'),
                 ),
               );
             },
