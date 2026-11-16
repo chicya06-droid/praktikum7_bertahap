@@ -40,7 +40,7 @@ Widget build(BuildContext context) {
               return Card(
                 child: ListTile(
                   title: Text(item['nama']!),
-                  subtitle: Text('${item['nim']} | ${item['prodi']} | IPK: ${item['ipk']}'),
+                  subtitle: Text('${item['nim']} | ${item['prodi']} | IPK: ${item['ipk'] ?? '0.00'}'),
                 ),
               );
             },
