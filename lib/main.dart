@@ -14,7 +14,14 @@ class MahasiswaPage extends StatefulWidget {
 
 class _MahasiswaPageState extends State<MahasiswaPage> {
 
-@override
+  // TAHAP 1: Inisialisasi data sementara di RAM.
+  final List<Map<String, String>> mahasiswa = [
+    {'id': '1', 'nim': '2026001', 'nama': 'Andi', 'prodi': 'Informatika'},
+    {'id': '2', 'nim': '2026002', 'nama': 'Siti', 'prodi': 'Informatika'},
+  ];
+  int nextId = 3;
+
+  @override
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(title: const Text('Praktikum 7: Data Mahasiswa')),
